@@ -1,6 +1,6 @@
 {
   "name": "md-ast-parser",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "High-performance Markdown to AST parser optimized for WYSIWYG usage.",
   "main": "dist/index.cjs",
   "module": "dist/index.mjs",
@@ -12,7 +12,9 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "dev": "tsup src/index.ts --watch",
