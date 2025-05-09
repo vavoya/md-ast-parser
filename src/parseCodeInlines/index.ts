@@ -2,41 +2,7 @@ import {createHighlighter, createCssVariablesTheme, HighlighterGeneric, BundledL
 import {readCache, storeCache} from "./cache";
 import {CodeInline} from "./types";
 import createCodeInline from "./createCodeInline";
-
-// Create a custom CSS variables theme, the following are the default values
-const myTheme = createCssVariablesTheme({
-    name: 'css-variables',
-    variablePrefix: '--shiki-',
-    variableDefaults: {},
-    fontStyle: true
-})
-
-let highlighter: HighlighterGeneric<BundledLanguage, BundledTheme> | null = null
-
-createHighlighter({
-    langs: [
-        'javascript',
-        'typescript',
-        'python',
-        'java',
-        'csharp',
-        'cpp',
-        'c',
-        'ruby',
-        'php',
-        'go',
-        'swift',
-        'kotlin',
-        'rust',
-        'sql',
-        'bash',
-        'html',
-        'css'
-    ],
-    themes: [myTheme] // register the theme
-}).then(result => {
-    highlighter = result
-});
+import {highlighter} from "./createHighlighter";
 
 export default function parseCodeInlines(lang: any, code: string): CodeInline[] {
     if (code === "") {
