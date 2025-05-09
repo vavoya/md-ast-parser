@@ -1,4 +1,3 @@
-import {createHighlighter, createCssVariablesTheme, HighlighterGeneric, BundledLanguage, BundledTheme} from 'shiki'
 import {readCache, storeCache} from "./cache";
 import {CodeInline} from "./types";
 import createCodeInline from "./createCodeInline";
