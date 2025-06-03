@@ -1,17 +1,18 @@
 import getClassName from "./getClassName";
-import {Inline, InlineSyntax} from "./types";
+import {ImgInline, InlineSyntax, SpanInline} from "./types";
 import createSpanInline from "./createSpanInline";
 import createImgInline from "./createImgInline";
-import {regex} from "./regex";
+import {defaultRegex} from "./regex";
 
 const SYNTAX = 'syntax'
 
-export function tokenizeLine(line: string) {
-    const matches = [...line.matchAll(regex)];
+export function parseInline(line: string) {
+    const matches = [...line.matchAll(defaultRegex)];
     const syntaxSet = new Set<InlineSyntax>([]);
     let prevIndex = 0;
 
-    const tokens = matches.reduce<Inline[]>((inlines, match) => {
+    const tokens = matches.reduce<(SpanInline | ImgInline)[]>((inlines, match) => {
+
         // 구분자 이전 문자열
         if (prevIndex !== match.index) {
             inlines.push(createSpanInline(getClassName(syntaxSet), line.substring(prevIndex, match.index)));
@@ -36,12 +37,11 @@ export function tokenizeLine(line: string) {
 
             prevIndex = match.index + delimiter.length;
         } else if (match.groups?.img) {
-            const alt = match.groups?.alt ?? '';
-            const src = match.groups?.src ?? '';
-
+            const alt = match.groups.alt as string;
+            const src = match.groups.src as string;
             inlines.push(createImgInline(alt, src));
+            prevIndex = match.index + match.groups.img.length
 
-            prevIndex = match.index + alt.length + src.length + 5;
         }
 
         return inlines;

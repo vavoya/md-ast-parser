@@ -1,5 +1,28 @@
 import { shikiPromise } from './parseCodeInlines/createHighlighter';
 import parseBlocks from './parseBlocks';
+export type {
+    ParagraphBlockNode,
+    HeadingBlockNode,
+    BlockquoteBlockNode,
+    ListBlockNode,
+    ListItemBlockNode,
+    CodeBlockNode,
+    ThematicBreakBlockNode,
+    RootBlockNode,
+    BlockNode,
+} from './createBlockNode/type';
+export type {
+    SpanInline,
+    ImgInline,
+    LinkInline,
+    Inline,
+    InlineSyntax,
+    InlineSyntaxSet,
+} from './parseInlines/types'
+
+export type {
+    CodeInline
+} from './parseCodeInlines/types'
 
 /**
  * 코드 하이라이터 초기화 Promise.

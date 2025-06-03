@@ -21,8 +21,8 @@ function generateTestLines(iteration: number) {
 		lines.push(`  - Subitem ${suffix}`)
 		lines.push(`    - SubSubitem ${suffix}`)
 		lines.push(`> Quote level 1 ${suffix}`)
-		lines.push(`    Quote level 2 ${suffix}`)
-		lines.push(`      Quote level 3 ${suffix}`)
+		lines.push(`  > Quote level 2 ${suffix}`)
+		lines.push(`    > Quote level 3 ${suffix}`)
 		lines.push('```js')
 		lines.push(`const index = ${'00000'.repeat(iteration)};`)
 		for (let j = 0; j < iteration; j++) {

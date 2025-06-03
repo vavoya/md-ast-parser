@@ -69,9 +69,48 @@ describe('테스트', () => {
 		assertEqualJSON(actual, expected)
 	})
 
-	test('이미지 인라인 파싱 동작(이스케이프)', () => {
+	test('링크 인라인 파싱 동작', () => {
 		const lines = [
-			'\\![설명](이미지 **주소)**음'
+			'[설명](이미지 **주소)**음'
+		]
+		const actual = parseBlocks(lines)
+		const expected = {
+			"type": "rootBlock",
+			"children": [
+				{
+					"type": "paragraph",
+					"children": [
+						{
+							"type": "link",
+							"href": "이미지 **주소",
+							"children": [
+								{
+									"type": "span",
+									"className": "",
+									"text": "설명"
+								}
+							]
+						},
+						{
+							"type": "span",
+							"className": "syntax bold",
+							"text": "**"
+						},
+						{
+							"type": "span",
+							"className": "bold",
+							"text": "음"
+						}
+					]
+				}
+			]
+		}
+		assertEqualJSON(actual, expected)
+	})
+
+	test('이미지 vs 링크 인라인 파싱 동작(이스케이프)', () => {
+		const lines = [
+			'\\![설명**강조**](이미지 **주소)**음'
 		]
 		const actual = parseBlocks(lines)
 		const expected = {
@@ -88,7 +127,33 @@ describe('테스트', () => {
 						{
 							"type": "span",
 							"className": "",
-							"text": "![설명](이미지 "
+							"text": "!"
+						},
+						{
+							"type": "link",
+							"href": "이미지 **주소",
+							"children": [
+								{
+									"type": "span",
+									"className": "",
+									"text": "설명"
+								},
+								{
+									"type": "span",
+									"className": "syntax bold",
+									"text": "**"
+								},
+								{
+									"type": "span",
+									"className": "bold",
+									"text": "강조"
+								},
+								{
+									"type": "span",
+									"className": "syntax bold",
+									"text": "**"
+								}
+							]
 						},
 						{
 							"type": "span",
@@ -98,17 +163,36 @@ describe('테스트', () => {
 						{
 							"type": "span",
 							"className": "bold",
-							"text": "주소)"
-						},
-						{
-							"type": "span",
-							"className": "syntax bold",
-							"text": "**"
-						},
-						{
-							"type": "span",
-							"className": "",
 							"text": "음"
+						}
+					]
+				}
+			]
+		}
+		assertEqualJSON(actual, expected)
+	})
+
+	test('복합 이미지 링크 파싱 동작', () => {
+		const lines = [
+			'[![대체 텍스트](https://example.com/image.png)](https://example.com)'
+		];
+		const actual = parseBlocks(lines)
+		const expected = {
+			"type": "rootBlock",
+			"children": [
+				{
+					"type": "paragraph",
+					"children": [
+						{
+							"type": "link",
+							"href": "https://example.com",
+							"children": [
+								{
+									"type": "img",
+									"alt": "대체 텍스트",
+									"src": "https://example.com/image.png"
+								}
+							]
 						}
 					]
 				}

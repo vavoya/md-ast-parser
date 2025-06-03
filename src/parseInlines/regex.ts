@@ -14,15 +14,17 @@ const fullPatterns = sortedSyntax
     .join('|');
 
 // 이미지 전체 구문 추가
-const imagePattern =
-    '(?<!\\\\)!\\[(?<alt>[^\\]]*)\\]\\((?<src>[^\\)]+)\\)';
+const imagePattern = `(?<!\\\\)!\\[(?<alt>(?!.*!\\[)[^\\]]*)\\]\\((?<src>[^)]+)\\)`;
+
+
 
 // 정규식 생성 (네이밍 추가)
-const regex = new RegExp(
+const defaultRegex = new RegExp(
     `\\\\(?<escaped>${escapePatterns})|(?<img>${imagePattern})|(?<plain>${fullPatterns})`,
     'g'
 );
 
+
 export {
-    regex,
+    defaultRegex,
 }
