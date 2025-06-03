@@ -94,6 +94,8 @@ AST 출력 예시는 [예제 테스트 코드](https://github.com/vavoya/md-ast-
 
 - 이미지: `![alt](url)` 및 `\\![alt](url)` 구분 처리
 
+- 링크: `[inline](url)` 및 `\\[inline](url)` 구분 처리
+
 - 헤딩: `#`, `##`, `###`
 
 - 리스트: 순서형, 비순서형, 중첩 포함
@@ -148,11 +150,11 @@ function generateTestLines(iteration: number) {
        lines.push(`Some p**arag*raph** text number ${suffix}`)  
        lines.push(`- Item ${suffix}`)  
        lines.push(`  - Subitem ${suffix}`)  
-       lines.push(`    - SubSubitem ${suffix}`)  
-       lines.push(`> Quote level 1 ${suffix}`)  
-       lines.push(`    Quote level 2 ${suffix}`)  
-       lines.push(`      Quote level 3 ${suffix}`)  
-       lines.push('```js')  
+       lines.push(`    - SubSubitem ${suffix}`)
+        lines.push(`> Quote level 1 ${suffix}`)
+        lines.push(`  > Quote level 2 ${suffix}`)
+        lines.push(`    > Quote level 3 ${suffix}`)
+        lines.push('```js')  
        lines.push(`const index = ${'00000'.repeat(iteration)};`)  
        for (let j = 0; j < iteration; j++) {  
           lines.push(`console.log(index);`)  
@@ -211,21 +213,21 @@ test('지연 후 파서 성능 측정', () => {
 
 ## Table of Contents (English)
 
-1. [Purpose](https://chatgpt.com/c/681d9c2f-b39c-8012-bc0f-14a4aa8f45bc#1-purpose)
+1. [Purpose](#1-purpose)
 
-2. [Installation](https://chatgpt.com/c/681d9c2f-b39c-8012-bc0f-14a4aa8f45bc#2-installation)
+2. [Installation](#2-installation)
 
-3. [Usage](https://chatgpt.com/c/681d9c2f-b39c-8012-bc0f-14a4aa8f45bc#3-usage)
+3. [Usage](#3-usage)
 
-4. [Example](https://chatgpt.com/c/681d9c2f-b39c-8012-bc0f-14a4aa8f45bc#4-example)
+4. [Example](#4-example)
 
-5. [Features](https://chatgpt.com/c/681d9c2f-b39c-8012-bc0f-14a4aa8f45bc#5-features)
+5. [Features](#5-features)
 
-6. [Caveats](https://chatgpt.com/c/681d9c2f-b39c-8012-bc0f-14a4aa8f45bc#6-caveats)
+6. [Caveats](#6-caveats)
 
-7. [Performance](https://chatgpt.com/c/681d9c2f-b39c-8012-bc0f-14a4aa8f45bc#7-performance)
+7. [Performance](#7-performance)
 
-8. [GitHub / NPM](https://chatgpt.com/c/681d9c2f-b39c-8012-bc0f-14a4aa8f45bc#8-github--npm)
+8. [GitHub / NPM](#8-github--npm)
 
 
 ---
@@ -299,6 +301,8 @@ See [example tests](https://github.com/vavoya/md-ast-parser/tree/master/src/test
 
 - Inline images: `![alt](url)` supported; `\\![...]` ignored
 
+- Inline Link: `[text or image](url)` supported; `\\[...]` ignored
+
 - Headings: `#`, `##`, `###`
 
 - Lists: ordered/unordered, nested
@@ -351,8 +355,8 @@ function generateTestLines(iteration: number) {
        lines.push(`  - Subitem ${suffix}`)  
        lines.push(`    - SubSubitem ${suffix}`)  
        lines.push(`> Quote level 1 ${suffix}`)  
-       lines.push(`    Quote level 2 ${suffix}`)  
-       lines.push(`      Quote level 3 ${suffix}`)  
+       lines.push(`  > Quote level 2 ${suffix}`)  
+       lines.push(`    > Quote level 3 ${suffix}`)  
        lines.push('```js')  
        lines.push(`const index = ${'00000'.repeat(iteration)};`)  
        for (let j = 0; j < iteration; j++) {  
