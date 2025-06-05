@@ -29,47 +29,76 @@ const langs: BundledLanguage[] = [
     'html',
     'css',
 ]
-export const langAlias: Record<string, BundledLanguage> = {
+const langAlias: Record<string, BundledLanguage> = {
+    // javascript
     'js': 'javascript',
     'mjs': 'javascript',
     'cjs': 'javascript',
 
+    // typescript
     'ts': 'typescript',
 
+    // python
     'py': 'python',
 
+    // java
+
+    // csharp
     'cs': 'csharp',
 
+    // cpp
     'c++': 'cpp',
     'hpp': 'cpp',
     'cc': 'cpp',
+    'cxx': 'cpp',
 
+    // c
+    'h': 'c',
+
+    // ruby
     'rb': 'ruby',
 
-    'ps1': 'bash',
-    'sh': 'bash',
-    'shell': 'bash',
-
-    'kt': 'kotlin',
-
-    'sqls': 'sql',
-
-    'html5': 'html',
-    'xhtml': 'html',
-
-    'scss': 'css',
-    'less': 'css',
-    'styl': 'css',
-
-    'gopher': 'go',
-
-    'cxx': 'cpp',
-    'h': 'c',
+    // php
     'php3': 'php',
     'php4': 'php',
     'php5': 'php',
-    'phps': 'php'
+    'phps': 'php',
+
+    // go
+    'gopher': 'go',
+
+    // swift
+
+    // kotlin
+    'kt': 'kotlin',
+
+    // rust
+
+    // sql
+    'sqls': 'sql',
+
+    // bash
+    'sh': 'bash',
+    'shell': 'bash',
+    'ps1': 'bash',
+
+    // html
+    'html5': 'html',
+    'xhtml': 'html',
+
+    // css
+    'scss': 'css',
+    'less': 'css',
+    'styl': 'css',
 }
+
+
+// 병합
+const fullLangMap: Record<string, BundledLanguage> = {
+    ...Object.fromEntries(langs.map(lang => [lang, lang])),
+    ...langAlias
+}
+
 
 
 const shikiPromise = new Promise((resolve, reject) => {
@@ -77,7 +106,6 @@ const shikiPromise = new Promise((resolve, reject) => {
         langs,
         langAlias,
         themes: [myTheme] // register the theme
-
     }).then(result => {
         highlighter = result;
         resolve(true)
@@ -89,4 +117,5 @@ const shikiPromise = new Promise((resolve, reject) => {
 export {
     highlighter,
     shikiPromise,
+    fullLangMap
 }

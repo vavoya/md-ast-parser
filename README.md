@@ -7,6 +7,8 @@ It parses Markdown blocks and inline syntax into structured ASTs with optional s
 ---
 
 ## 버전 기록
+### 0.1.9
+- 코드블럭에서 `java`, `javascript`같은 풀네임을 인식 못하던거 수정
 ### 0.1.8
 - 빌드를 안하고 배포를 해버려서, 다시 빌드후 배포를 했습니다...
 ### 0.1.7

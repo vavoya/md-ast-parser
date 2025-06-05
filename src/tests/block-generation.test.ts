@@ -15,7 +15,11 @@ function assertEqualJSON(actual: any, expected: any) {
 
 // 전역 비동기 초기화
 before(async () => {
-	await shikiPromise;
+	try {
+		await shikiPromise;
+	} catch (error) {
+		console.log('ddd',error)
+	}
 });
 
 describe('테스트', () => {
@@ -578,7 +582,7 @@ describe('테스트', () => {
 		assertEqualJSON(actual, expected)
 	})
 
-	test('코드블럭 테스트', () => {
+	test('코드블럭 테스트 js', () => {
 		const lines = [
 			'```js',
 			'const a = 2',
@@ -640,7 +644,66 @@ describe('테스트', () => {
 		assertEqualJSON(actual, expected)
 	})
 
-	test('코드블럭 실패 테스트', () => {
+	test('코드블럭 테스트 java', () => {
+		const lines = [
+			'```java',
+			'int a = 2;',
+			'```',
+			'여긴 코드블럭이 아니다.'
+		]
+		const actual = parseBlocks(lines)
+		const expected = {
+			"type": "rootBlock",
+			"children": [
+				{
+					"type": "codeBlock",
+					"lang": "java",
+					"children": [
+						[
+							{
+								"text": "int",
+								"color": "var(--shiki-token-keyword)"
+							},
+							{
+								"text": " a ",
+								"color": "var(--shiki-foreground)"
+							},
+							{
+								"text": "=",
+								"color": "var(--shiki-token-keyword)"
+							},
+							{
+								"text": " ",
+								"color": "var(--shiki-foreground)"
+							},
+							{
+								"text": "2",
+								"color": "var(--shiki-token-constant)"
+							},
+							{
+								"text": ";",
+								"color": "var(--shiki-foreground)"
+							}
+						]
+					]
+				},
+				{
+					"type": "paragraph",
+					"children": [
+						{
+							"type": "span",
+							"className": "",
+							"text": "여긴 코드블럭이 아니다."
+						}
+					]
+				}
+			]
+		}
+		assertEqualJSON(actual, expected)
+	})
+
+
+	test('코드블럭 실패 테스트 javascri', () => {
 		const lines = [
 			'```javascri',
 			'const a = 2',
