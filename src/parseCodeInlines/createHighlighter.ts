@@ -1,4 +1,4 @@
-import {BundledLanguage, bundledLanguages, BundledTheme, createCssVariablesTheme, createHighlighter, HighlighterGeneric} from "shiki";
+import {BundledLanguage, BundledTheme, createCssVariablesTheme, createHighlighter, HighlighterGeneric} from "shiki";
 
 // Create a custom CSS variables theme, the following are the default values
 const myTheme = createCssVariablesTheme({
