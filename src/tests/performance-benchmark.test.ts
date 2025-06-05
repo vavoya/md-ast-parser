@@ -54,9 +54,14 @@ before(async () => {
 });
 
 test('지연 후 파서 성능 측정', () => {
+	const startMem = process.memoryUsage().heapUsed
+
 	for (let i = 0; i < 100; i++) {
 		benchmarkParse(i)
 	}
+
+	const endMem = process.memoryUsage().heapUsed
+	console.log(`Memory used: ${(endMem - startMem) / 1024 / 1024} MB`)
 })
 
 /**

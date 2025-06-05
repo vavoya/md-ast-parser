@@ -639,4 +639,42 @@ describe('테스트', () => {
 		}
 		assertEqualJSON(actual, expected)
 	})
+
+	test('코드블럭 실패 테스트', () => {
+		const lines = [
+			'```javascri',
+			'const a = 2',
+			'```',
+			'여긴 코드블럭이 아니다.'
+		]
+		const actual = parseBlocks(lines)
+		const expected = {
+			"type": "rootBlock",
+			"children": [
+				{
+					"type": "codeBlock",
+					"lang": "javascri",
+					"children": [
+						[
+							{
+								"text": "const a = 2",
+								"color": "var(--shiki-token-constant)"
+							}
+						]
+					]
+				},
+				{
+					"type": "paragraph",
+					"children": [
+						{
+							"type": "span",
+							"className": "",
+							"text": "여긴 코드블럭이 아니다."
+						}
+					]
+				}
+			]
+		}
+		assertEqualJSON(actual, expected)
+	})
 })
