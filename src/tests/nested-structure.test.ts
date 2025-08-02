@@ -1,6 +1,7 @@
 // block-generation.test.ts
-import { test, describe } from 'node:test'
+import {test, describe, before} from 'node:test'
 import parseBlocks from '../parseBlocks';
+import {shikiPromise} from "../parseCodeInlines/createHighlighter";
 
 // JSON 비교 함수
 function assertEqualJSON(actual: any, expected: any) {
@@ -12,6 +13,10 @@ function assertEqualJSON(actual: any, expected: any) {
 }
 
 
+// 전역 비동기 초기화
+before(async () => {
+	await shikiPromise;
+});
 
 describe('중첩 테스트', () => {
 	test('UL리스트 중첩', () => {
@@ -37,6 +42,7 @@ describe('중첩 테스트', () => {
 									"type": "paragraph",
 									"children": [
 										{
+											"type": "span",
 											"className": "",
 											"text": "리스트1"
 										}
@@ -54,6 +60,7 @@ describe('중첩 테스트', () => {
 													"type": "paragraph",
 													"children": [
 														{
+															"type": "span",
 															"className": "",
 															"text": "리스트2"
 														}
@@ -63,6 +70,7 @@ describe('중첩 테스트', () => {
 													"type": "paragraph",
 													"children": [
 														{
+															"type": "span",
 															"className": "",
 															"text": "리스트22"
 														}
@@ -76,6 +84,7 @@ describe('중첩 테스트', () => {
 									"type": "paragraph",
 									"children": [
 										{
+											"type": "span",
 											"className": "",
 											"text": "리스트11"
 										}
@@ -113,6 +122,7 @@ describe('중첩 테스트', () => {
 									"type": "paragraph",
 									"children": [
 										{
+											"type": "span",
 											"className": "",
 											"text": "리스트1"
 										}
@@ -130,6 +140,7 @@ describe('중첩 테스트', () => {
 													"type": "paragraph",
 													"children": [
 														{
+															"type": "span",
 															"className": "",
 															"text": "리스트2"
 														}
@@ -139,6 +150,7 @@ describe('중첩 테스트', () => {
 													"type": "paragraph",
 													"children": [
 														{
+															"type": "span",
 															"className": "",
 															"text": "리스트22"
 														}
@@ -152,6 +164,7 @@ describe('중첩 테스트', () => {
 									"type": "paragraph",
 									"children": [
 										{
+											"type": "span",
 											"className": "",
 											"text": "리스트11"
 										}
@@ -189,6 +202,7 @@ describe('중첩 테스트', () => {
 									"type": "paragraph",
 									"children": [
 										{
+											"type": "span",
 											"className": "",
 											"text": "리스트1"
 										}
@@ -206,6 +220,7 @@ describe('중첩 테스트', () => {
 													"type": "paragraph",
 													"children": [
 														{
+															"type": "span",
 															"className": "",
 															"text": "리스트2"
 														}
@@ -223,6 +238,7 @@ describe('중첩 테스트', () => {
 					"type": "paragraph",
 					"children": [
 						{
+							"type": "span",
 							"className": "",
 							"text": "   리스트22"
 						}
@@ -232,6 +248,7 @@ describe('중첩 테스트', () => {
 					"type": "paragraph",
 					"children": [
 						{
+							"type": "span",
 							"className": "",
 							"text": "   리스트11"
 						}
@@ -260,6 +277,7 @@ describe('중첩 테스트', () => {
 							"type": "paragraph",
 							"children": [
 								{
+									"type": "span",
 									"className": "",
 									"text": "인용문1"
 								}
@@ -272,6 +290,7 @@ describe('중첩 테스트', () => {
 									"type": "paragraph",
 									"children": [
 										{
+											"type": "span",
 											"className": "",
 											"text": "인용문2"
 										}
@@ -281,6 +300,7 @@ describe('중첩 테스트', () => {
 									"type": "paragraph",
 									"children": [
 										{
+											"type": "span",
 											"className": "",
 											"text": "인용문22"
 										}
@@ -292,6 +312,7 @@ describe('중첩 테스트', () => {
 							"type": "paragraph",
 							"children": [
 								{
+									"type": "span",
 									"className": "",
 									"text": "인용문11"
 								}
@@ -323,6 +344,7 @@ describe('중첩 테스트', () => {
 							"type": "paragraph",
 							"children": [
 								{
+									"type": "span",
 									"className": "",
 									"text": "인용문1"
 								}
@@ -340,6 +362,7 @@ describe('중첩 테스트', () => {
 											"type": "paragraph",
 											"children": [
 												{
+													"type": "span",
 													"className": "",
 													"text": "리스트1"
 												}
@@ -349,6 +372,7 @@ describe('중첩 테스트', () => {
 											"type": "paragraph",
 											"children": [
 												{
+													"type": "span",
 													"className": "",
 													"text": "리스트11"
 												}
@@ -361,6 +385,7 @@ describe('중첩 테스트', () => {
 													"type": "paragraph",
 													"children": [
 														{
+															"type": "span",
 															"className": "",
 															"text": "인용문2"
 														}
@@ -376,6 +401,7 @@ describe('중첩 테스트', () => {
 							"type": "paragraph",
 							"children": [
 								{
+									"type": "span",
 									"className": "",
 									"text": "인용문11"
 								}
@@ -409,6 +435,7 @@ describe('중첩 테스트', () => {
 							"type": "paragraph",
 							"children": [
 								{
+									"type": "span",
 									"className": "",
 									"text": "인용문1"
 								}
@@ -426,6 +453,7 @@ describe('중첩 테스트', () => {
 											"type": "paragraph",
 											"children": [
 												{
+													"type": "span",
 													"className": "",
 													"text": "리스트1"
 												}
@@ -435,6 +463,7 @@ describe('중첩 테스트', () => {
 											"type": "paragraph",
 											"children": [
 												{
+													"type": "span",
 													"className": "",
 													"text": "리스트11"
 												}
@@ -447,6 +476,7 @@ describe('중첩 테스트', () => {
 													"type": "paragraph",
 													"children": [
 														{
+															"type": "span",
 															"className": "",
 															"text": "인용문2"
 														}
@@ -458,7 +488,31 @@ describe('중첩 테스트', () => {
 													"children": [
 														[
 															{
-																"text": "const a = 2",
+																"text": "const",
+																"color": "var(--shiki-token-keyword)"
+															},
+															{
+																"text": " ",
+																"color": "var(--shiki-foreground)"
+															},
+															{
+																"text": "a",
+																"color": "var(--shiki-token-constant)"
+															},
+															{
+																"text": " ",
+																"color": "var(--shiki-foreground)"
+															},
+															{
+																"text": "=",
+																"color": "var(--shiki-token-keyword)"
+															},
+															{
+																"text": " ",
+																"color": "var(--shiki-foreground)"
+															},
+															{
+																"text": "2",
 																"color": "var(--shiki-token-constant)"
 															}
 														]
@@ -474,6 +528,7 @@ describe('중첩 테스트', () => {
 							"type": "paragraph",
 							"children": [
 								{
+									"type": "span",
 									"className": "",
 									"text": "인용문11"
 								}
@@ -509,6 +564,7 @@ describe('중첩 테스트', () => {
 							"type": "paragraph",
 							"children": [
 								{
+									"type": "span",
 									"className": "",
 									"text": "인용문1"
 								}
@@ -526,6 +582,7 @@ describe('중첩 테스트', () => {
 											"type": "paragraph",
 											"children": [
 												{
+													"type": "span",
 													"className": "",
 													"text": "리스트1"
 												}
@@ -535,6 +592,7 @@ describe('중첩 테스트', () => {
 											"type": "paragraph",
 											"children": [
 												{
+													"type": "span",
 													"className": "",
 													"text": "리스트11"
 												}
@@ -547,6 +605,7 @@ describe('중첩 테스트', () => {
 													"type": "paragraph",
 													"children": [
 														{
+															"type": "span",
 															"className": "",
 															"text": "인용문2"
 														}
@@ -558,7 +617,31 @@ describe('중첩 테스트', () => {
 													"children": [
 														[
 															{
-																"text": "const a = 2",
+																"text": "const",
+																"color": "var(--shiki-token-keyword)"
+															},
+															{
+																"text": " ",
+																"color": "var(--shiki-foreground)"
+															},
+															{
+																"text": "a",
+																"color": "var(--shiki-token-constant)"
+															},
+															{
+																"text": " ",
+																"color": "var(--shiki-foreground)"
+															},
+															{
+																"text": "=",
+																"color": "var(--shiki-token-keyword)"
+															},
+															{
+																"text": " ",
+																"color": "var(--shiki-foreground)"
+															},
+															{
+																"text": "2",
 																"color": "var(--shiki-token-constant)"
 															}
 														]
@@ -568,6 +651,7 @@ describe('중첩 테스트', () => {
 													"type": "paragraph",
 													"children": [
 														{
+															"type": "span",
 															"className": "",
 															"text": "const a = 2"
 														}
@@ -583,6 +667,7 @@ describe('중첩 테스트', () => {
 							"type": "paragraph",
 							"children": [
 								{
+									"type": "span",
 									"className": "",
 									"text": "인용문11"
 								}

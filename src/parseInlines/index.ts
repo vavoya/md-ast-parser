@@ -1,5 +1,5 @@
 import {readCache, storeCache} from "./cache";
-import {tokenizeLine} from "./tokenizeLine";
+import parseInlinesWithLinks from "./parseInlinesWithLinks";
 
 export default function parseInlines(line: string) {
     // 캐시 검사
@@ -8,7 +8,7 @@ export default function parseInlines(line: string) {
         return cachedTokens;
     }
 
-    const tokens = tokenizeLine(line);
-    storeCache(line, tokens);
-    return tokens
+    const inlines = parseInlinesWithLinks(line);
+    storeCache(line, inlines);
+    return inlines
 }
