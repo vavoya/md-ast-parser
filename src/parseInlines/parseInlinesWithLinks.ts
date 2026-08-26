@@ -1,8 +1,14 @@
-import {Inline} from "./types";
+import {Inline, InlineSyntax, InlineSyntaxSet} from "./types";
 import {parseInline} from "./parseInline";
 import createLinkInline from "./createLinkInline";
 
-export default function parseInlinesWithLinks(text: string) {
+/**
+ * @description 링크와 이미지를 먼저 분리한 뒤, 나머지 구간을 parseInline 에 넘긴다
+ * @param text 파싱할 문자열
+ * @param syntaxSet 열려 있는 구분자 집합. 링크로 잘린 구간 사이에서 강조 상태를 잇는다.
+ *                  링크 텍스트 내부는 바깥으로 새면 안 되므로 별도 집합으로 파싱한다.
+ */
+export default function parseInlinesWithLinks(text: string, syntaxSet: InlineSyntaxSet = new Set<InlineSyntax>([])) {
     const regex = new RegExp(
         `(?<!\\\\)(?<imgOpen>!\\[)|(?<!\\\\)(?<linkOpen>\\[)|(?<close>\\]\\([^)]*\\))`,
         'g'
@@ -29,7 +35,7 @@ export default function parseInlinesWithLinks(text: string) {
             // 이미지 < 링크
             if (imageOpen && linkOpen && (imageIndex < linkIndex)) {
                 const prevText = text.substring(prevIndex, linkIndex);
-                const prevInline = parseInline(prevText);
+                const prevInline = parseInline(prevText, syntaxSet);
 
                 const linkText = text.substring(linkIndex + 1, match.index);
                 const href = text.substring(match.index + 2, match.index + match.groups.close.length - 1);
@@ -47,7 +53,7 @@ export default function parseInlinesWithLinks(text: string) {
             // 링크
             if (linkOpen) {
                 const prevText = text.substring(prevIndex, linkIndex);
-                const prevInline = parseInline(prevText);
+                const prevInline = parseInline(prevText, syntaxSet);
 
                 const linkText = text.substring(linkIndex + 1, match.index);
                 const href = text.substring(match.index + 2, match.index + match.groups.close.length - 1);
@@ -81,7 +87,7 @@ export default function parseInlinesWithLinks(text: string) {
 
     if (prevIndex < text.length) {
         const prevText = text.substring(prevIndex);
-        const prevInline = parseInline(prevText);
+        const prevInline = parseInline(prevText, syntaxSet);
         array.push(...prevInline);
     }
 

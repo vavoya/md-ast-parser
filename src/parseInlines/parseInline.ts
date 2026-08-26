@@ -1,14 +1,19 @@
 import getClassName from "./getClassName";
-import {ImgInline, InlineSyntax, SpanInline} from "./types";
+import {ImgInline, InlineSyntax, InlineSyntaxSet, SpanInline} from "./types";
 import createSpanInline from "./createSpanInline";
 import createImgInline from "./createImgInline";
 import {defaultRegex} from "./regex";
 
 const SYNTAX = 'syntax'
 
-export function parseInline(line: string) {
+/**
+ * @description 한 줄에서 구분자 토글을 처리해 인라인 토큰을 만든다
+ * @param line 파싱할 문자열
+ * @param syntaxSet 열려 있는 구분자 집합. 호출자가 넘기면 그 집합을 직접 갱신하므로
+ *                  링크나 코드로 잘린 구간 사이에서도 강조 상태가 이어진다.
+ */
+export function parseInline(line: string, syntaxSet: InlineSyntaxSet = new Set<InlineSyntax>([])) {
     const matches = [...line.matchAll(defaultRegex)];
-    const syntaxSet = new Set<InlineSyntax>([]);
     let prevIndex = 0;
 
     const tokens = matches.reduce<(SpanInline | ImgInline)[]>((inlines, match) => {
