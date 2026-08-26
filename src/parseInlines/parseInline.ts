@@ -43,9 +43,13 @@ export function parseInline(line: string, syntaxSet: InlineSyntaxSet = new Set<I
         } else if (match.groups?.img) {
             const alt = match.groups.alt as string;
             const src = match.groups.src as string;
-            inlines.push(createImgInline(alt, src));
-            prevIndex = match.index + match.groups.img.length
 
+            // 원문을 남겨야 토큰을 이어 붙였을 때 입력과 같아진다.
+            // 그림은 그 뒤에 따로 둔다
+            inlines.push(createSpanInline(`${SYNTAX} img`, match.groups.img));
+            inlines.push(createImgInline(alt, src));
+
+            prevIndex = match.index + match.groups.img.length
         }
 
         return inlines;

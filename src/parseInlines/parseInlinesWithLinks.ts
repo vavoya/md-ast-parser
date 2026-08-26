@@ -1,6 +1,18 @@
 import {Inline, InlineSyntax, InlineSyntaxSet} from "./types";
 import {parseInline} from "./parseInline";
 import createLinkInline from "./createLinkInline";
+import createSpanInline from "./createSpanInline";
+import { SYNTAX_CLASS_NAME as SYNTAX } from "./syntax";
+
+/**
+ * @description 링크의 여는 대괄호와 닫는 부분을 원문 그대로 남긴다.
+ *
+ * 지워 버리면 화면에서 사라진 자리에 커서를 놓을 수 없고,
+ * 토큰을 이어 붙여도 원문이 되지 않는다.
+ */
+function createLinkSyntax(text: string) {
+    return createSpanInline(`${SYNTAX} link`, text);
+}
 
 /**
  * @description 링크와 이미지를 먼저 분리한 뒤, 나머지 구간을 parseInline 에 넘긴다
@@ -41,7 +53,12 @@ export default function parseInlinesWithLinks(text: string, syntaxSet: InlineSyn
                 const href = text.substring(match.index + 2, match.index + match.groups.close.length - 1);
                 const linkInline = createLinkInline(href, parseInline(linkText));
 
-                array.push(...prevInline, linkInline);
+                array.push(
+                    ...prevInline,
+                    createLinkSyntax('['),
+                    linkInline,
+                    createLinkSyntax(match.groups.close),
+                );
 
                 // 어차피 이미지는 죽은 놈이다. 링크를 자식으로 못가진다.
                 linkOpen = false;
@@ -59,7 +76,12 @@ export default function parseInlinesWithLinks(text: string, syntaxSet: InlineSyn
                 const href = text.substring(match.index + 2, match.index + match.groups.close.length - 1);
                 const linkInline = createLinkInline(href, parseInline(linkText));
 
-                array.push(...prevInline, linkInline);
+                array.push(
+                    ...prevInline,
+                    createLinkSyntax('['),
+                    linkInline,
+                    createLinkSyntax(match.groups.close),
+                );
 
                 linkOpen = false;
                 prevIndex = match.index + match.groups.close.length

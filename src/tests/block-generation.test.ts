@@ -53,6 +53,11 @@ describe('테스트', () => {
 					"type": "paragraph",
 					"children": [
 						{
+							"type": "span",
+							"className": "syntax img",
+							"text": "![설명](이미지 **주소)"
+						},
+						{
 							"type": "img",
 							"alt": "설명",
 							"src": "이미지 **주소"
@@ -87,6 +92,11 @@ describe('테스트', () => {
 					"type": "paragraph",
 					"children": [
 						{
+							"type": "span",
+							"className": "syntax link",
+							"text": "["
+						},
+						{
 							"type": "link",
 							"href": "이미지 **주소",
 							"children": [
@@ -96,6 +106,11 @@ describe('테스트', () => {
 									"text": "설명"
 								}
 							]
+						},
+						{
+							"type": "span",
+							"className": "syntax link",
+							"text": "](이미지 **주소)"
 						},
 						{
 							"type": "span",
@@ -137,6 +152,11 @@ describe('테스트', () => {
 							"text": "!"
 						},
 						{
+							"type": "span",
+							"className": "syntax link",
+							"text": "["
+						},
+						{
 							"type": "link",
 							"href": "이미지 **주소",
 							"children": [
@@ -161,6 +181,11 @@ describe('테스트', () => {
 									"text": "**"
 								}
 							]
+						},
+						{
+							"type": "span",
+							"className": "syntax link",
+							"text": "](이미지 **주소)"
 						},
 						{
 							"type": "span",
@@ -192,15 +217,30 @@ describe('테스트', () => {
 					"type": "paragraph",
 					"children": [
 						{
+							"type": "span",
+							"className": "syntax link",
+							"text": "["
+						},
+						{
 							"type": "link",
 							"href": "https://example.com",
 							"children": [
+								{
+									"type": "span",
+									"className": "syntax img",
+									"text": "![대체 텍스트](https://example.com/image.png)"
+								},
 								{
 									"type": "img",
 									"alt": "대체 텍스트",
 									"src": "https://example.com/image.png"
 								}
 							]
+						},
+						{
+							"type": "span",
+							"className": "syntax link",
+							"text": "](https://example.com)"
 						}
 					],
 					"rawText": "[![대체 텍스트](https://example.com/image.png)](https://example.com)"
