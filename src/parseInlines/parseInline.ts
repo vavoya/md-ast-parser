@@ -3,8 +3,7 @@ import {ImgInline, InlineSyntax, InlineSyntaxSet, SpanInline} from "./types";
 import createSpanInline from "./createSpanInline";
 import createImgInline from "./createImgInline";
 import {defaultRegex} from "./regex";
-
-const SYNTAX = 'syntax'
+import {SYNTAX_CLASS_NAME as SYNTAX} from "./syntax";
 
 /**
  * @description 한 줄에서 구분자 토글을 처리해 인라인 토큰을 만든다
