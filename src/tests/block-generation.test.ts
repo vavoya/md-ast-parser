@@ -33,7 +33,8 @@ describe('테스트', () => {
 			"children": [
 				{
 					"type": "paragraph",
-					"children": []
+					"children": [],
+					"rawText": ""
 				}
 			]
 		}
@@ -66,7 +67,8 @@ describe('테스트', () => {
 							"className": "bold",
 							"text": "음"
 						}
-					]
+					],
+					"rawText": "![설명](이미지 **주소)**음"
 				}
 			]
 		}
@@ -105,7 +107,8 @@ describe('테스트', () => {
 							"className": "bold",
 							"text": "음"
 						}
-					]
+					],
+					"rawText": "[설명](이미지 **주소)**음"
 				}
 			]
 		}
@@ -169,7 +172,8 @@ describe('테스트', () => {
 							"className": "bold",
 							"text": "음"
 						}
-					]
+					],
+					"rawText": "\\![설명**강조**](이미지 **주소)**음"
 				}
 			]
 		}
@@ -198,7 +202,8 @@ describe('테스트', () => {
 								}
 							]
 						}
-					]
+					],
+					"rawText": "[![대체 텍스트](https://example.com/image.png)](https://example.com)"
 				}
 			]
 		}
@@ -296,7 +301,8 @@ describe('테스트', () => {
 							"className": "",
 							"text": "하이라이트삭제"
 						}
-					]
+					],
+					"rawText": "**강조*기울기~~취소선==하이라이트**강조삭제*기울기삭제~~취소선삭제==하이라이트삭제"
 				}
 			]
 		}
@@ -394,7 +400,8 @@ describe('테스트', () => {
 							"className": "italic",
 							"text": "하이라이트삭제"
 						}
-					]
+					],
+					"rawText": "**강조\\*기울기 안하고~~취소선==하이라이트**강조삭제*기울기~~취소선삭제==하이라이트삭제"
 				}
 			]
 		}
@@ -432,7 +439,8 @@ describe('테스트', () => {
 							"className": "syntax bold",
 							"text": "**"
 						}
-					]
+					],
+					"rawText": "# **헤더1**"
 				},
 				{
 					"type": "heading",
@@ -453,7 +461,8 @@ describe('테스트', () => {
 							"className": "syntax italic",
 							"text": "*"
 						}
-					]
+					],
+					"rawText": "## *헤더2*"
 				},
 				{
 					"type": "heading",
@@ -464,12 +473,14 @@ describe('테스트', () => {
 							"className": "",
 							"text": "헤더3"
 						}
-					]
+					],
+					"rawText": "### 헤더3"
 				},
 				{
 					"type": "heading",
 					"level": 3,
-					"children": []
+					"children": [],
+					"rawText": "### "
 				},
 				{
 					"type": "paragraph",
@@ -479,7 +490,8 @@ describe('테스트', () => {
 							"className": "",
 							"text": "#이건헤더?"
 						}
-					]
+					],
+					"rawText": "#이건헤더?"
 				}
 			]
 		}
@@ -517,7 +529,8 @@ describe('테스트', () => {
 								}
 							]
 						}
-					]
+					],
+					"rawText": "> 인용문**강조"
 				}
 			]
 		}
@@ -553,7 +566,8 @@ describe('테스트', () => {
 								}
 							]
 						}
-					]
+					],
+					"rawText": "- ul"
 				},
 				{
 					"type": "list",
@@ -575,7 +589,8 @@ describe('테스트', () => {
 								}
 							]
 						}
-					]
+					],
+					"rawText": "1. ol"
 				}
 			]
 		}
@@ -627,7 +642,8 @@ describe('테스트', () => {
 								"color": "var(--shiki-token-constant)"
 							}
 						]
-					]
+					],
+					"rawText": "```js\nconst a = 2\n```"
 				},
 				{
 					"type": "paragraph",
@@ -637,7 +653,8 @@ describe('테스트', () => {
 							"className": "",
 							"text": "여긴 코드블럭이 아니다."
 						}
-					]
+					],
+					"rawText": "여긴 코드블럭이 아니다."
 				}
 			]
 		}
@@ -685,7 +702,8 @@ describe('테스트', () => {
 								"color": "var(--shiki-foreground)"
 							}
 						]
-					]
+					],
+					"rawText": "```java\nint a = 2;\n```"
 				},
 				{
 					"type": "paragraph",
@@ -695,7 +713,8 @@ describe('테스트', () => {
 							"className": "",
 							"text": "여긴 코드블럭이 아니다."
 						}
-					]
+					],
+					"rawText": "여긴 코드블럭이 아니다."
 				}
 			]
 		}
@@ -724,7 +743,8 @@ describe('테스트', () => {
 								"color": "var(--shiki-token-constant)"
 							}
 						]
-					]
+					],
+					"rawText": "```javascri\nconst a = 2\n```"
 				},
 				{
 					"type": "paragraph",
@@ -734,7 +754,8 @@ describe('테스트', () => {
 							"className": "",
 							"text": "여긴 코드블럭이 아니다."
 						}
-					]
+					],
+					"rawText": "여긴 코드블럭이 아니다."
 				}
 			]
 		}
