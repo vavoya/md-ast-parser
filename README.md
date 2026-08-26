@@ -7,6 +7,17 @@ It parses Markdown blocks and inline syntax into structured ASTs with optional s
 ---
 
 ## 버전 기록
+### 0.2.0
+- 최상위 블럭에 원문(`rawText`)이 담깁니다. 편집기에서 커서가 놓인 블럭의 원문을 되살리는 용도입니다.
+  - `parseBlocks` 의 반환 타입이 `ParsedRootBlockNode` 가 되었고, 그 자식은 `rawText` 를 가집니다.
+  - 최상위 블럭의 `rawText` 를 순서대로 이어 붙이면 입력 원문과 정확히 일치합니다.
+  - 하위(중첩) 블럭에는 붙지 않습니다.
+- 인라인 코드(`` `code` ``)를 지원합니다.
+  - 여는 백틱과 개수가 같은 백틱으로만 닫힙니다. (`` ``a`b`` `` → 코드 내용 ``a`b``)
+  - 닫는 백틱이 없으면 코드로 보지 않고 일반 텍스트로 둡니다. 작성 도중 화면이 코드 스타일로 뒤집히는 것을 막기 위함입니다.
+  - 코드 내부의 문법은 해석하지 않습니다. (`` `**a**` `` → 굵게 처리 안 됨)
+  - 백틱은 지우지 않고 `syntax code` 클래스를 가진 토큰으로 남깁니다.
+- 링크 앞뒤에서 강조가 끊기던 문제를 고쳤습니다. (`**a [link](u) b**` 에서 `b`가 굵게 처리되지 않던 문제)
 ### 0.1.9
 - 코드블럭에서 `java`, `javascript`같은 풀네임을 인식 못하던거 수정
 ### 0.1.8
@@ -101,6 +112,8 @@ AST 출력 예시는 [예제 테스트 코드](https://github.com/vavoya/md-ast-
 
 - `**굵게**`, `*기울임*`, `~~취소선~~`, `==하이라이트==`
 
+- 인라인 코드: `` `code` ``, 백틱 개수를 맞춰 `` ``a`b`` `` 처럼 중첩 가능
+
 - 이스케이프: `\\*`, `\\==` 등 무효화 처리
 
 - 이미지: `![alt](url)` 및 `\\![alt](url)` 구분 처리
@@ -116,6 +129,8 @@ AST 출력 예시는 [예제 테스트 코드](https://github.com/vavoya/md-ast-
 - 코드블럭: 언어 지정 가능, `shiki` 스타일 적용
 
 - 빈 문단, 블록 중첩 등 유연한 구조 지원
+
+- 최상위 블럭의 원문 보존: `rawText`
 
 
 ---
@@ -308,6 +323,8 @@ See [example tests](https://github.com/vavoya/md-ast-parser/tree/master/src/test
 
 - Styling: `**bold**`, `*italic*`, `~~strike~~`, `==highlight==`
 
+- Inline code: `` `code` ``, closed only by a backtick run of the same length (`` ``a`b`` ``)
+
 - Escape: `\\*`, `\\==` → treated as literal
 
 - Inline images: `![alt](url)` supported; `\\![...]` ignored
@@ -323,6 +340,8 @@ See [example tests](https://github.com/vavoya/md-ast-parser/tree/master/src/test
 - Code blocks: fenced triple backtick blocks, optional language
 
 - Mixed nesting: quote inside list, code inside quote, etc.
+
+- Source text of each top-level block is preserved in `rawText`
 
 
 ---
