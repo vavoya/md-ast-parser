@@ -1,26 +1,50 @@
 {
   "name": "md-ast-parser",
-  "version": "0.1.9",
+  "version": "0.3.0",
   "description": "High-performance Markdown to AST parser optimized for WYSIWYG usage.",
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "keywords": [
+    "markdown",
+    "markdown-parser",
+    "parser",
+    "ast",
+    "ast-parser",
+    "syntax-tree",
+    "syntax-highlighting",
+    "shiki",
+    "typescript",
+    "wysiwyg"
+  ],
+  "homepage": "https://github.com/vavoya/md-ast-parser#readme",
+  "bugs": {
+    "url": "https://github.com/vavoya/md-ast-parser/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vavoya/md-ast-parser.git"
+  },
+  "license": "MIT",
+  "author": "vavoya",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.js"
     }
   },
   "files": [
     "dist"
   ],
+  "sideEffects": false,
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "dev": "tsup src/index.ts --watch",
     "test": "vitest",
     "bench": "tsx src/tests/performance-benchmark.test.ts",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run clean && npm run build"
   },
   "devDependencies": {
     "tsx": "^4.7.0",
@@ -31,7 +55,5 @@
   "dependencies": {
     "lru-cache": "^11.1.0",
     "shiki": "^3.2.1"
-  },
-  "license": "MIT",
-  "author": "vavoya"
+  }
 }

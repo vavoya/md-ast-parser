@@ -54,6 +54,20 @@ type BlockNode =
     | ThematicBreakBlockNode
     | RootBlockNode;
 
+/**
+ * @description 최상위 블럭. 해당 블럭을 만들어낸 원문을 함께 가진다.
+ */
+export type TopLevelBlockNode = BlockNode & { rawText: string };
+
+/**
+ * @description parseBlocks 의 반환 타입.
+ * 최상위 자식은 rawText 를 보장한다.
+ */
+export type ParsedRootBlockNode = {
+    type: 'rootBlock';
+    children: TopLevelBlockNode[];
+}
+
 
 
 export {

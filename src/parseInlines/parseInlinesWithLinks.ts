@@ -1,8 +1,26 @@
-import {Inline} from "./types";
+import {Inline, InlineSyntax, InlineSyntaxSet} from "./types";
 import {parseInline} from "./parseInline";
 import createLinkInline from "./createLinkInline";
+import createSpanInline from "./createSpanInline";
+import { SYNTAX_CLASS_NAME as SYNTAX } from "./syntax";
 
-export default function parseInlinesWithLinks(text: string) {
+/**
+ * @description 링크의 여는 대괄호와 닫는 부분을 원문 그대로 남긴다.
+ *
+ * 지워 버리면 화면에서 사라진 자리에 커서를 놓을 수 없고,
+ * 토큰을 이어 붙여도 원문이 되지 않는다.
+ */
+function createLinkSyntax(text: string) {
+    return createSpanInline(`${SYNTAX} link`, text);
+}
+
+/**
+ * @description 링크와 이미지를 먼저 분리한 뒤, 나머지 구간을 parseInline 에 넘긴다
+ * @param text 파싱할 문자열
+ * @param syntaxSet 열려 있는 구분자 집합. 링크로 잘린 구간 사이에서 강조 상태를 잇는다.
+ *                  링크 텍스트 내부는 바깥으로 새면 안 되므로 별도 집합으로 파싱한다.
+ */
+export default function parseInlinesWithLinks(text: string, syntaxSet: InlineSyntaxSet = new Set<InlineSyntax>([])) {
     const regex = new RegExp(
         `(?<!\\\\)(?<imgOpen>!\\[)|(?<!\\\\)(?<linkOpen>\\[)|(?<close>\\]\\([^)]*\\))`,
         'g'
@@ -29,13 +47,18 @@ export default function parseInlinesWithLinks(text: string) {
             // 이미지 < 링크
             if (imageOpen && linkOpen && (imageIndex < linkIndex)) {
                 const prevText = text.substring(prevIndex, linkIndex);
-                const prevInline = parseInline(prevText);
+                const prevInline = parseInline(prevText, syntaxSet);
 
                 const linkText = text.substring(linkIndex + 1, match.index);
                 const href = text.substring(match.index + 2, match.index + match.groups.close.length - 1);
                 const linkInline = createLinkInline(href, parseInline(linkText));
 
-                array.push(...prevInline, linkInline);
+                array.push(
+                    ...prevInline,
+                    createLinkSyntax('['),
+                    linkInline,
+                    createLinkSyntax(match.groups.close),
+                );
 
                 // 어차피 이미지는 죽은 놈이다. 링크를 자식으로 못가진다.
                 linkOpen = false;
@@ -47,13 +70,18 @@ export default function parseInlinesWithLinks(text: string) {
             // 링크
             if (linkOpen) {
                 const prevText = text.substring(prevIndex, linkIndex);
-                const prevInline = parseInline(prevText);
+                const prevInline = parseInline(prevText, syntaxSet);
 
                 const linkText = text.substring(linkIndex + 1, match.index);
                 const href = text.substring(match.index + 2, match.index + match.groups.close.length - 1);
                 const linkInline = createLinkInline(href, parseInline(linkText));
 
-                array.push(...prevInline, linkInline);
+                array.push(
+                    ...prevInline,
+                    createLinkSyntax('['),
+                    linkInline,
+                    createLinkSyntax(match.groups.close),
+                );
 
                 linkOpen = false;
                 prevIndex = match.index + match.groups.close.length
@@ -81,7 +109,7 @@ export default function parseInlinesWithLinks(text: string) {
 
     if (prevIndex < text.length) {
         const prevText = text.substring(prevIndex);
-        const prevInline = parseInline(prevText);
+        const prevInline = parseInline(prevText, syntaxSet);
         array.push(...prevInline);
     }
 

@@ -10,6 +10,8 @@ export type {
     ThematicBreakBlockNode,
     RootBlockNode,
     BlockNode,
+    TopLevelBlockNode,
+    ParsedRootBlockNode,
 } from './createBlockNode/type';
 export type {
     SpanInline,

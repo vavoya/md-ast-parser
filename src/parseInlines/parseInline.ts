@@ -1,14 +1,18 @@
 import getClassName from "./getClassName";
-import {ImgInline, InlineSyntax, SpanInline} from "./types";
+import {ImgInline, InlineSyntax, InlineSyntaxSet, SpanInline} from "./types";
 import createSpanInline from "./createSpanInline";
 import createImgInline from "./createImgInline";
 import {defaultRegex} from "./regex";
+import {SYNTAX_CLASS_NAME as SYNTAX} from "./syntax";
 
-const SYNTAX = 'syntax'
-
-export function parseInline(line: string) {
+/**
+ * @description 한 줄에서 구분자 토글을 처리해 인라인 토큰을 만든다
+ * @param line 파싱할 문자열
+ * @param syntaxSet 열려 있는 구분자 집합. 호출자가 넘기면 그 집합을 직접 갱신하므로
+ *                  링크나 코드로 잘린 구간 사이에서도 강조 상태가 이어진다.
+ */
+export function parseInline(line: string, syntaxSet: InlineSyntaxSet = new Set<InlineSyntax>([])) {
     const matches = [...line.matchAll(defaultRegex)];
-    const syntaxSet = new Set<InlineSyntax>([]);
     let prevIndex = 0;
 
     const tokens = matches.reduce<(SpanInline | ImgInline)[]>((inlines, match) => {
@@ -39,9 +43,13 @@ export function parseInline(line: string) {
         } else if (match.groups?.img) {
             const alt = match.groups.alt as string;
             const src = match.groups.src as string;
-            inlines.push(createImgInline(alt, src));
-            prevIndex = match.index + match.groups.img.length
 
+            // 원문을 남겨야 토큰을 이어 붙였을 때 입력과 같아진다.
+            // 그림은 그 뒤에 따로 둔다
+            inlines.push(createSpanInline(`${SYNTAX} img`, match.groups.img));
+            inlines.push(createImgInline(alt, src));
+
+            prevIndex = match.index + match.groups.img.length
         }
 
         return inlines;
