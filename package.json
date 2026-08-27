@@ -29,9 +29,14 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     }
   },
   "files": [
@@ -41,7 +46,7 @@
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "dev": "tsup src/index.ts --watch",
-    "test": "vitest",
+    "test": "tsx --test src/tests/*.test.ts",
     "bench": "tsx src/tests/performance-benchmark.test.ts",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run clean && npm run build"
