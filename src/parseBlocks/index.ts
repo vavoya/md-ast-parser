@@ -1,3 +1,4 @@
+import { flushTableCandidate } from './consumeTableLine';
 import { RootBlockNode, ParsedRootBlockNode, TopLevelBlockNode } from '../createBlockNode/type';
 import createRootBlockNode from '../createBlockNode/createRootBlockNode';
 import createBlockStates from './createBlockStates';
@@ -20,7 +21,16 @@ export default function parseBlocks(lines: string[]): ParsedRootBlockNode {
 	const blockStates = createBlockStates();
 
 	// 최상위 블럭별 원문. 인덱스가 rootBlockNode.children 과 일치한다
-	const rawTexts: string[] = [];
+	const rawTexts: (string | string[])[] = [];
+	const appendRaw = (line: string) => {
+		const index = rawTexts.length - 1;
+		const previous = rawTexts[index];
+		if (typeof previous === 'string') {
+			rawTexts[index] = [previous, line];
+		} else {
+			previous.push(line);
+		}
+	};
 
 	lines.forEach(line => {
 		const prevChildCount = rootBlockNode.children.length;
@@ -39,15 +49,26 @@ export default function parseBlocks(lines: string[]): ParsedRootBlockNode {
 		// 하위 블럭에 줄이 들어간 경우에도 최상위 개수는 그대로이므로 이어 붙는다
 		if (rootBlockNode.children.length > prevChildCount) {
 			rawTexts.push(line);
+		} else if (rootBlockNode.children.length < prevChildCount) {
+			// 첫 본문 행이 확인되면 헤더와 구분선의 임시 노드를 하나의 표로 합친다.
+			const delimiter = rawTexts.pop()!;
+			if (typeof delimiter === 'string') {
+				appendRaw(delimiter);
+			} else {
+				delimiter.forEach(appendRaw);
+			}
+			appendRaw(line);
 		} else if (rawTexts.length > 0) {
-			rawTexts[rawTexts.length - 1] += '\n' + line;
+			appendRaw(line);
 		}
 	})
+
+	flushTableCandidate(blockStates);
 
 	// 노드가 몇 번 교체되었든 영향받지 않도록, 끝난 뒤에 원문을 주입한다
 	const children = rootBlockNode.children.map((child, index): TopLevelBlockNode => ({
 		...child,
-		rawText: rawTexts[index] ?? '',
+		rawText: typeof rawTexts[index] === 'string' ? rawTexts[index] : (rawTexts[index] as string[]).join('\n'),
 	}));
 
 	return {

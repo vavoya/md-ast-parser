@@ -35,6 +35,19 @@ type CodeBlockNode = {
     children: CodeInline[][];
 }
 
+type TableAlignment = 'left' | 'center' | 'right' | null;
+
+type TableCell = {
+    children: Inline[];
+};
+
+type TableBlockNode = {
+    type: 'table';
+    header: TableCell[];
+    align: TableAlignment[];
+    rows: TableCell[][];
+};
+
 type ThematicBreakBlockNode = {
     type: 'thematicBreakBlock';
 }
@@ -50,6 +63,7 @@ type BlockNode =
     | BlockquoteBlockNode
     | ListBlockNode
     | ListItemBlockNode
+    | TableBlockNode
     | CodeBlockNode
     | ThematicBreakBlockNode
     | RootBlockNode;
@@ -77,6 +91,9 @@ export {
     ListBlockNode,
     ListItemBlockNode,
     CodeBlockNode,
+    TableBlockNode,
+    TableCell,
+    TableAlignment,
     ThematicBreakBlockNode,
     RootBlockNode,
     BlockNode,

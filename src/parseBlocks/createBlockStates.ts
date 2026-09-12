@@ -1,9 +1,11 @@
+import type { TableState } from './consumeTableLine';
 import { CodeBlockNode } from '../createBlockNode/type';
 
 type CodeBlockState = Map<CodeBlockNode, { isOpen: boolean }>;
 
 type BlockStates = {
 	codeBlockStates: CodeBlockState;
+	tableState: TableState;
 }
 
 export {
@@ -12,9 +14,9 @@ export {
 
 export default function createBlockStates(): BlockStates {
 	const codeBlockStates: CodeBlockState = new Map()
-	// 테이블도 나중에
 
 	return {
-		codeBlockStates
+		codeBlockStates,
+		tableState: { flag: 0 },
 	}
 }

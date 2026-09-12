@@ -1,3 +1,4 @@
+import consumeTableLine from './consumeTableLine';
 import { BlockquoteBlockNode, ListItemBlockNode, RootBlockNode } from '../createBlockNode/type';
 import { BlockStates } from './createBlockStates';
 import createCodeBlockNode from '../createBlockNode/createCodeBlockNode';
@@ -39,14 +40,20 @@ export default function parseLineToChildren(targetBlockNode: RootBlockNode | Blo
 		}
 	}
 
+	if (consumeTableLine(targetBlockNode, line, blockStates)) {
+		return targetBlockNode.children;
+	}
+
 	// 나머지는 하위 블럭이 전부 존재하지
-	// 테이블이 추가된다면 어떻게 해야할지 머리 아프지만 흠
 	let nextLine = line;
 	const startNode = createRootBlockNode()
 	let currentNode = startNode as RootBlockNode | BlockquoteBlockNode | ListItemBlockNode;
 
 	// 첫 nextLine은 '' 이더라도 p로 처리를 해줘야하기에 do를 사용
 	do {
+		if (currentNode !== startNode && consumeTableLine(currentNode, nextLine, blockStates)) {
+			break;
+		}
 		const prefixParseResult = parsePrefix(nextLine);
 
 		nextLine = prefixParseResult.nextLine
