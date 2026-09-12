@@ -90,88 +90,16 @@ var shikiPromise = new Promise((resolve, reject) => {
   });
 });
 
-// src/createBlockNode/createRootBlockNode.ts
-function createRootBlockNode() {
-  return {
-    type: "rootBlock",
-    children: []
-  };
-}
-
-// src/parseBlocks/createBlockStates.ts
-function createBlockStates() {
-  const codeBlockStates = /* @__PURE__ */ new Map();
-  return {
-    codeBlockStates
-  };
-}
-
-// src/createBlockNode/createCodeBlockNode.ts
-function createCodeBlockNode(lang) {
-  return {
-    type: "codeBlock",
-    lang,
-    children: []
-  };
-}
-
-// src/parseCodeInlines/cache.ts
-import { LRUCache } from "lru-cache";
-var codeCache = new LRUCache({
-  max: 1e3,
-  // 적절한 캐시 사이즈
-  updateAgeOnGet: true
-});
-function readCache(key) {
-  return codeCache.get(key);
-}
-function storeCache(key, value) {
-  codeCache.set(key, value);
-  return value;
-}
-
-// src/parseCodeInlines/createCodeInline.ts
-function createCodeInline(text, color) {
-  return {
-    text,
-    color
-  };
-}
-
-// src/parseCodeInlines/index.ts
-function parseCodeInlines(lang, code) {
-  if (code === "") {
-    return [];
-  }
-  if (!highlighter) {
-    createCodeInline(code, "var(--shiki-token-constant)");
-    return [createCodeInline(code, "var(--shiki-token-constant)")];
-  }
-  const key = `${lang}-${code}`;
-  const cachedTokens = readCache(key);
-  if (cachedTokens) {
-    return cachedTokens;
-  }
-  const lowerCaseLang = lang.toLowerCase();
-  const rawTokens = highlighter.codeToTokens(
-    code,
-    { lang: fullLangMap[lowerCaseLang] ? fullLangMap[lowerCaseLang] : "plaintext", theme: "css-variables" }
-  );
-  const tokens = rawTokens.tokens[0].map((token) => createCodeInline(token.content, token.color ?? "var(--shiki-token-constant)"));
-  storeCache(key, tokens);
-  return tokens;
-}
-
 // src/parseInlines/cache.ts
-import { LRUCache as LRUCache2 } from "lru-cache";
-var inlineCache = new LRUCache2({
+import { LRUCache } from "lru-cache";
+var inlineCache = new LRUCache({
   max: 1e3
   // 적절한 캐시 사이즈
 });
-function readCache2(key) {
+function readCache(key) {
   return inlineCache.get(key);
 }
-function storeCache2(key, value) {
+function storeCache(key, value) {
   inlineCache.set(key, value);
   return value;
 }
@@ -461,13 +389,220 @@ function parseInlinesWithCode(text) {
 
 // src/parseInlines/index.ts
 function parseInlines(line) {
-  const cachedTokens = readCache2(line);
+  const cachedTokens = readCache(line);
   if (cachedTokens) {
     return cachedTokens;
   }
   const inlines = parseInlinesWithCode(line);
-  storeCache2(line, inlines);
+  storeCache(line, inlines);
   return inlines;
+}
+
+// src/parseBlocks/consumeTableLine.ts
+function splitTableRow(line) {
+  if (!/^[ \t]*\|/.test(line)) {
+    return null;
+  }
+  const boundaries = [];
+  const delimiters = /\\[\s\S]|\|/g;
+  let match;
+  while ((match = delimiters.exec(line)) !== null) {
+    if (match[0] === "|") {
+      boundaries.push(match.index);
+    }
+  }
+  if (boundaries.length < 2) {
+    return null;
+  }
+  const last = boundaries[boundaries.length - 1];
+  if (!/^[ \t]*$/.test(line.slice(last + 1))) {
+    return null;
+  }
+  const cells = [];
+  for (let index = 1; index < boundaries.length; index++) {
+    cells.push(line.slice(boundaries[index - 1] + 1, boundaries[index]).trim());
+  }
+  return cells;
+}
+function parseAlignment(cells) {
+  const align = [];
+  for (const cell of cells) {
+    if (!/^:?-{3,}:?$/.test(cell)) {
+      return null;
+    }
+    if (cell.startsWith(":") && cell.endsWith(":")) {
+      align.push("center");
+    } else if (cell.startsWith(":")) {
+      align.push("left");
+    } else if (cell.endsWith(":")) {
+      align.push("right");
+    } else {
+      align.push(null);
+    }
+  }
+  return align;
+}
+function parseCells(cells) {
+  return cells.map((cell) => ({
+    children: parseInlines(cell)
+  }));
+}
+function flushTableCandidate(states) {
+  const state = states.tableState;
+  if (state.flag === 1 || state.flag === 2) {
+    state.header.node.children = parseInlines(state.header.source);
+    if (state.flag === 2) {
+      state.delimiter.node.children = parseInlines(state.delimiter.source);
+    }
+  }
+  states.tableState = {
+    flag: 0
+  };
+}
+function consumeTableLine(parent, line, states) {
+  let state = states.tableState;
+  if (state.flag !== 0 && state.parent !== parent) {
+    flushTableCandidate(states);
+    state = states.tableState;
+  }
+  const cells = splitTableRow(line);
+  if (state.flag === 3) {
+    if (cells !== null && cells.length === state.table.header.length) {
+      state.table.rows.push(parseCells(cells));
+      return true;
+    }
+    flushTableCandidate(states);
+  } else if (state.flag === 2) {
+    if (cells !== null && cells.length === state.cells.length) {
+      const table = {
+        type: "table",
+        header: parseCells(state.cells),
+        align: state.align,
+        rows: [parseCells(cells)]
+      };
+      parent.children.splice(state.index, 2, table);
+      states.tableState = {
+        flag: 3,
+        parent,
+        table
+      };
+      return true;
+    }
+    flushTableCandidate(states);
+  } else if (state.flag === 1) {
+    const align = cells !== null && cells.length === state.cells.length ? parseAlignment(cells) : null;
+    if (align !== null) {
+      const node = {
+        type: "paragraph",
+        children: []
+      };
+      parent.children.push(node);
+      states.tableState = {
+        ...state,
+        flag: 2,
+        delimiter: {
+          node,
+          source: line
+        },
+        align
+      };
+      return true;
+    }
+    flushTableCandidate(states);
+  }
+  if (cells !== null) {
+    const node = {
+      type: "paragraph",
+      children: []
+    };
+    const index = parent.children.length;
+    parent.children.push(node);
+    states.tableState = {
+      flag: 1,
+      parent,
+      index,
+      header: {
+        node,
+        source: line
+      },
+      cells
+    };
+    return true;
+  }
+  return false;
+}
+
+// src/createBlockNode/createRootBlockNode.ts
+function createRootBlockNode() {
+  return {
+    type: "rootBlock",
+    children: []
+  };
+}
+
+// src/parseBlocks/createBlockStates.ts
+function createBlockStates() {
+  const codeBlockStates = /* @__PURE__ */ new Map();
+  return {
+    codeBlockStates,
+    tableState: { flag: 0 }
+  };
+}
+
+// src/createBlockNode/createCodeBlockNode.ts
+function createCodeBlockNode(lang) {
+  return {
+    type: "codeBlock",
+    lang,
+    children: []
+  };
+}
+
+// src/parseCodeInlines/cache.ts
+import { LRUCache as LRUCache2 } from "lru-cache";
+var codeCache = new LRUCache2({
+  max: 1e3,
+  // 적절한 캐시 사이즈
+  updateAgeOnGet: true
+});
+function readCache2(key) {
+  return codeCache.get(key);
+}
+function storeCache2(key, value) {
+  codeCache.set(key, value);
+  return value;
+}
+
+// src/parseCodeInlines/createCodeInline.ts
+function createCodeInline(text, color) {
+  return {
+    text,
+    color
+  };
+}
+
+// src/parseCodeInlines/index.ts
+function parseCodeInlines(lang, code) {
+  if (code === "") {
+    return [];
+  }
+  if (!highlighter) {
+    createCodeInline(code, "var(--shiki-token-constant)");
+    return [createCodeInline(code, "var(--shiki-token-constant)")];
+  }
+  const key = `${lang}-${code}`;
+  const cachedTokens = readCache2(key);
+  if (cachedTokens) {
+    return cachedTokens;
+  }
+  const lowerCaseLang = lang.toLowerCase();
+  const rawTokens = highlighter.codeToTokens(
+    code,
+    { lang: fullLangMap[lowerCaseLang] ? fullLangMap[lowerCaseLang] : "plaintext", theme: "css-variables" }
+  );
+  const tokens = rawTokens.tokens[0].map((token) => createCodeInline(token.content, token.color ?? "var(--shiki-token-constant)"));
+  storeCache2(key, tokens);
+  return tokens;
 }
 
 // src/createBlockNode/createHeadingBlockNode.ts
@@ -676,10 +811,16 @@ function parseLineToChildren(targetBlockNode, line, blockStates) {
     } else {
     }
   }
+  if (consumeTableLine(targetBlockNode, line, blockStates)) {
+    return targetBlockNode.children;
+  }
   let nextLine = line;
   const startNode = createRootBlockNode();
   let currentNode = startNode;
   do {
+    if (currentNode !== startNode && consumeTableLine(currentNode, nextLine, blockStates)) {
+      break;
+    }
     const prefixParseResult = parsePrefix(nextLine);
     nextLine = prefixParseResult.nextLine;
     const prefixBlockNode = prefixParseResult.block;
@@ -757,6 +898,15 @@ function parseBlocks(lines) {
   const rootBlockNode = createRootBlockNode();
   const blockStates = createBlockStates();
   const rawTexts = [];
+  const appendRaw = (line) => {
+    const index = rawTexts.length - 1;
+    const previous = rawTexts[index];
+    if (typeof previous === "string") {
+      rawTexts[index] = [previous, line];
+    } else {
+      previous.push(line);
+    }
+  };
   lines.forEach((line) => {
     const prevChildCount = rootBlockNode.children.length;
     const { targetBlockNode, indentOffset } = resolveIndentContextForLine(rootBlockNode, line);
@@ -764,13 +914,22 @@ function parseBlocks(lines) {
     targetBlockNode.children = newChildren;
     if (rootBlockNode.children.length > prevChildCount) {
       rawTexts.push(line);
+    } else if (rootBlockNode.children.length < prevChildCount) {
+      const delimiter = rawTexts.pop();
+      if (typeof delimiter === "string") {
+        appendRaw(delimiter);
+      } else {
+        delimiter.forEach(appendRaw);
+      }
+      appendRaw(line);
     } else if (rawTexts.length > 0) {
-      rawTexts[rawTexts.length - 1] += "\n" + line;
+      appendRaw(line);
     }
   });
+  flushTableCandidate(blockStates);
   const children = rootBlockNode.children.map((child, index) => ({
     ...child,
-    rawText: rawTexts[index] ?? ""
+    rawText: typeof rawTexts[index] === "string" ? rawTexts[index] : rawTexts[index].join("\n")
   }));
   return {
     type: "rootBlock",

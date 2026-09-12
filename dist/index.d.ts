@@ -60,6 +60,16 @@ type CodeBlockNode = {
     lang: string;
     children: CodeInline[][];
 };
+type TableAlignment = 'left' | 'center' | 'right' | null;
+type TableCell = {
+    children: Inline[];
+};
+type TableBlockNode = {
+    type: 'table';
+    header: TableCell[];
+    align: TableAlignment[];
+    rows: TableCell[][];
+};
 type ThematicBreakBlockNode = {
     type: 'thematicBreakBlock';
 };
@@ -67,7 +77,7 @@ type RootBlockNode = {
     type: 'rootBlock';
     children: BlockNode[];
 };
-type BlockNode = ParagraphBlockNode | HeadingBlockNode | BlockquoteBlockNode | ListBlockNode | ListItemBlockNode | CodeBlockNode | ThematicBreakBlockNode | RootBlockNode;
+type BlockNode = ParagraphBlockNode | HeadingBlockNode | BlockquoteBlockNode | ListBlockNode | ListItemBlockNode | TableBlockNode | CodeBlockNode | ThematicBreakBlockNode | RootBlockNode;
 /**
  * @description 최상위 블럭. 해당 블럭을 만들어낸 원문을 함께 가진다.
  */
@@ -95,4 +105,4 @@ type ParsedRootBlockNode = {
  */
 declare function parseBlocks(lines: string[]): ParsedRootBlockNode;
 
-export { type BlockNode, type BlockquoteBlockNode, type CodeBlockNode, type CodeInline, type HeadingBlockNode, type ImgInline, type Inline, type InlineSyntax, type InlineSyntaxSet, type LinkInline, type ListBlockNode, type ListItemBlockNode, type ParagraphBlockNode, type ParsedRootBlockNode, type RootBlockNode, type SpanInline, type ThematicBreakBlockNode, type TopLevelBlockNode, parseBlocks as default, parseBlocks, shikiPromise };
+export { type BlockNode, type BlockquoteBlockNode, type CodeBlockNode, type CodeInline, type HeadingBlockNode, type ImgInline, type Inline, type InlineSyntax, type InlineSyntaxSet, type LinkInline, type ListBlockNode, type ListItemBlockNode, type ParagraphBlockNode, type ParsedRootBlockNode, type RootBlockNode, type SpanInline, type TableAlignment, type TableBlockNode, type TableCell, type ThematicBreakBlockNode, type TopLevelBlockNode, parseBlocks as default, parseBlocks, shikiPromise };
