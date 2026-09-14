@@ -1,6 +1,6 @@
 {
   "name": "md-ast-parser",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "High-performance Markdown to AST parser optimized for WYSIWYG usage.",
   "keywords": [
     "markdown",
